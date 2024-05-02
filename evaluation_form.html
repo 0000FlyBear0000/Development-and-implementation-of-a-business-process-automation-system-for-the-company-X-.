@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Matrix</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe/1.2.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Evaluation Matrix</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Criterion 1</th>
+                    <th>Criterion 2</th>
+                    <!-- Add more criteria as needed -->
+                    <th>Average</th>
+                </tr>
+            </thead>
+            <tbody id="matrix-body">
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe/1.2.0/js/frappe.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Fetch data from Frappe database
+            frappe.call({
+                method: "your_custom_method_to_fetch_data",
+                callback: function(r) {
+                    if (r.message) {
+                        const data = r.message;
+                        let matrixBody = "";
+
+                        // Generate matrix rows
+                        data.forEach(function(item) {
+                            let row = `<tr><td>${item.name}</td>`;
+                            let sum = 0;
+
+                            item.criteria.forEach(function(criterion, index) {
+                                row += `<td>${criterion}</td>`;
+                                sum += criterion;
+                            });
+
+                            const average = sum / item.criteria.length;
+                            row += `<td>${average.toFixed(2)}</td></tr>`;
+                            matrixBody += row;
+                        });
+
+                        // Append matrix rows to the table body
+                        $("#matrix-body").html(matrixBody);
+                    } else {
+                        alert("Error fetching data.");
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
